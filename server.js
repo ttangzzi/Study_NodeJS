@@ -8,7 +8,7 @@ app.listen(8080, () => {
 
 // 웹 페이지 보내주기
 app.get("/", (요청, 응답) => {
-  응답.sendfile(__dirname + "/index.html");
+  응답.sendFile(__dirname + "/index.html");
 });
 
 // 새로운 페이지 만들기

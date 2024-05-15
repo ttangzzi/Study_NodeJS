@@ -2,6 +2,9 @@
 const express = require("express");
 const app = express();
 
+// css 파일 있는 폴더(public)를 등록해야한다. css,js,img 등 적용가능 (static 파일들)
+app.use(express.static(__dirname + "/public"));
+
 app.listen(8080, () => {
   console.log("http://localhost:8080 에서 서버 실행 중");
 });

@@ -33,10 +33,13 @@ app.get("/", (요청, 응답) => {
 
 // 새로운 페이지 만들기
 app.get("/news", (요청, 응답) => {
-  db.collection("post").insertOne({ title: "어쩌구" });
-  응답.send("뉴스페이지");
+  db.collection("post").insertOne({ title: "어쩌구" }); // post에 'title : 어쩌구' 추가
+  // 응답.send("뉴스페이지");
 });
 
-app.get("/shop", (요청, 응답) => {
-  응답.send("쇼핑페이지");
+// list에 들어가면 DB 데이터를 가져와 출력한다
+app.get("/list", async (요청, 응답) => {
+  let result = await db.collection("post").find().toArray();
+  console.log(result[0].title); // 0번째의 title 가져오기
+  응답.send(result[0].title);
 });

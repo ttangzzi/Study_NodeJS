@@ -5,6 +5,9 @@ const app = express();
 // css 파일 있는 폴더(public)를 등록해야한다. css,js,img 등 적용가능 (static 파일들)
 app.use(express.static(__dirname + "/public"));
 
+// ejs를 사용하기 위한 세팅
+app.set("view engine", "ejs");
+
 // mongo DB 연결 세팅 코드
 const { MongoClient } = require("mongodb");
 
@@ -40,6 +43,14 @@ app.get("/news", (요청, 응답) => {
 // list에 들어가면 DB 데이터를 가져와 출력한다
 app.get("/list", async (요청, 응답) => {
   let result = await db.collection("post").find().toArray();
-  console.log(result[0].title); // 0번째의 title 가져오기
-  응답.send(result[0].title);
+  // console.log(result[0].title); // 0번째의 title 가져와 log에 출력
+  // 응답.send(result[0].title); // title을 사이트에 보이도록 하기
+
+  // ejs 파일을 보내주기 위해 sendFile(for html)이 아닌 render(for ejs)로 적어준다.
+  // 서버 사이드 랜더링
+  응답.render("list.ejs", { posts: result });
+});
+
+app.get("/time", (요청, 응답) => {
+  응답.render("time.ejs", { date: new Date() });
 });

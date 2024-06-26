@@ -5,6 +5,23 @@ const app = express();
 // css 파일 있는 폴더(public)를 등록해야한다. css,js,img 등 적용가능 (static 파일들)
 app.use(express.static(__dirname + "/public"));
 
+// mongo DB 연결 세팅 코드
+const { MongoClient } = require("mongodb");
+
+let db;
+const url =
+  "mongodb+srv://cvbg0802:sook6055@cluster0.gi0zdlm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+new MongoClient(url)
+  .connect()
+  .then((client) => {
+    console.log("DB연결성공");
+    db = client.db("forum"); // forum에 연결
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
+// ==================================== //
 app.listen(8080, () => {
   console.log("http://localhost:8080 에서 서버 실행 중");
 });
@@ -16,6 +33,7 @@ app.get("/", (요청, 응답) => {
 
 // 새로운 페이지 만들기
 app.get("/news", (요청, 응답) => {
+  db.collection("post").insertOne({ title: "어쩌구" });
   응답.send("뉴스페이지");
 });
 

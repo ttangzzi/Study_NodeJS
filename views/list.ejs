@@ -6,16 +6,19 @@
     <title>list</title>
     <link rel="stylesheet" href="main.css" />
   </head>
+  <!-- 서버 사이드 랜더링 -->
   <body class="grey-bg">
+    <!-- 다른 ejs 파일에 있던 html을 복사해온다 -->
+    <%- include('nav.ejs') %>
     <div class="white-bg">
+      <!-- for문을 통해 글 갯수만큼 게시물을 작성 -->
+      <% for (let i =0; i < posts.length; i++) { %>
       <div class="list-box">
-        <h4><%= posts[0].title %></h4>
-        <p><%= posts[0].content %></p>
+        <!-- 데이터 바인딩 -->
+        <h4><%= posts[i].title %></h4>
+        <p><%= posts[i].content %></p>
       </div>
-      <div class="list-box">
-        <h4><%= posts[1].title %></h4>
-        <p><%= posts[1].content %></p>
-      </div>
+      <% } %>
     </div>
   </body>
 </html>

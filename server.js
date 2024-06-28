@@ -118,15 +118,22 @@ app.get("/edit/:postID", async (요청, 응답) => {
 });
 
 app.post("/update", async (요청, 응답) => {
+  console.log(요청.body.title);
+
   try {
-    let result = await db
-      .collection("post")
-      .updateOne(
-        { _id: new ObjectId(요청.body.id) },
-        { $set: { title: 요청.body.title, content: 요청.body.content } }
-      );
-    console.log(result);
-    응답.redirect("/list");
+    if (요청.body.title == "") {
+      응답.send("제목 입력 하지않았습니다.");
+    } else if (요청.body.content == "") {
+      응답.send("내용 입력 하지않았습니다.");
+    } else {
+      let result = await db
+        .collection("post")
+        .updateOne(
+          { _id: new ObjectId(요청.body.id) },
+          { $set: { title: 요청.body.title, content: 요청.body.content } }
+        );
+      응답.redirect("/list");
+    }
   } catch (e) {
     console.log(e);
     응답.status(500).send("서버 에러");

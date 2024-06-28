@@ -1,6 +1,16 @@
 body {
   margin: 0;
 }
+
+a {
+  text-decoration-line: none;
+  color: black;
+}
+
+a:hover {
+  color: green;
+}
+
 .nav {
   display: flex;
   padding: 15px;

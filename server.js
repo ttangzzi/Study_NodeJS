@@ -92,9 +92,20 @@ app.post("/add", async (요청, 응답) => {
 // 유저가 detail/어쩌고 접속하면
 // {_id : 어쩌구} 글을 DB에서 찾아
 // ejs 파일에 박아 보내준다
-app.get("/detail/:aaaa", async (요청, 응답) => {
-  let result = await db
-    .collection("post")
-    .findOne({ _id: new ObjectId(요청.params.aaaa) }); // id값을 찾기
-  응답.render("detail.ejs", { posts: result });
+app.get("/detail/:postID", async (요청, 응답) => {
+  try {
+    let result = await db
+      .collection("post")
+      .findOne({ _id: new ObjectId(요청.params.postID) }); // id값을 찾기
+
+    // 적절한 길이의 랜덤문자는 try catch로도 못잡으므로 if문을 한번 더 작성
+    if (result == null) {
+      응답.status(404).send("이상한 url 입력");
+    }
+    응답.render("detail.ejs", { posts: result });
+  } catch (e) {
+    // 예외 처리
+    console.log(e);
+    응답.status(404).send("이상한 url 입력");
+  }
 });

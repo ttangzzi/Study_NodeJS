@@ -15,7 +15,9 @@
       <% for (let i =0; i < posts.length; i++) { %>
       <div class="list-box">
         <!-- 데이터 바인딩 -->
-        <h4><%= posts[i].title %></h4>
+        <h4>
+          <a href="/detail/<%= posts[i]._id %>"><%= posts[i].title %></a>
+        </h4>
         <p><%= posts[i].content %></p>
       </div>
       <% } %>

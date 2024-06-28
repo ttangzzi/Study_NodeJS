@@ -12,8 +12,8 @@ app.set("view engine", "ejs");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// mongo DB 연결 세팅 코드
-const { MongoClient } = require("mongodb");
+// mongo DB 연결 세팅 코드 + Object ID 를 쓸 수 있도록 세팅
+const { MongoClient, ObjectId } = require("mongodb");
 
 let db;
 const url =
@@ -86,4 +86,15 @@ app.post("/add", async (요청, 응답) => {
     console.log(e);
     응답.status(500).send("서버에러");
   }
+});
+
+// 상세페이지 기능
+// 유저가 detail/어쩌고 접속하면
+// {_id : 어쩌구} 글을 DB에서 찾아
+// ejs 파일에 박아 보내준다
+app.get("/detail/:aaaa", async (요청, 응답) => {
+  let result = await db
+    .collection("post")
+    .findOne({ _id: new ObjectId(요청.params.aaaa) }); // id값을 찾기
+  응답.render("detail.ejs", { posts: result });
 });

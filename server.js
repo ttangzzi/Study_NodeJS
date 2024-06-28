@@ -1,20 +1,20 @@
 // 라이브러리 사용법이므로 숙지하자 !
 const express = require("express");
 const app = express();
+// method-override를 사용하기 위한 세팅
+const methodOverride = require("method-override");
+app.use(methodOverride("_method"));
 
 // css 파일 있는 폴더(public)를 등록해야한다. css,js,img 등 적용가능 (static 파일들)
 app.use(express.static(__dirname + "/public"));
-
 // ejs를 사용하기 위한 세팅
 app.set("view engine", "ejs");
-
 // 유저가 보낸 정보를 서버에서 출력하기 위한 세팅
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // mongo DB 연결 세팅 코드 + Object ID 를 쓸 수 있도록 세팅
 const { MongoClient, ObjectId } = require("mongodb");
-
 let db;
 const url =
   "mongodb+srv://cvbg0802:sook6055@cluster0.gi0zdlm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -117,9 +117,9 @@ app.get("/edit/:postID", async (요청, 응답) => {
   응답.render("edit.ejs", { posts: result });
 });
 
-app.post("/update", async (요청, 응답) => {
-  console.log(요청.body.title);
-
+app.put("/update", async (요청, 응답) => {
+  // // 여러가지 수정문법을 사용해본 흔적
+  // await db.collection("post").updateMany({ _id: 1 }, { $inc: { like: 2 } });
   try {
     if (요청.body.title == "") {
       응답.send("제목 입력 하지않았습니다.");

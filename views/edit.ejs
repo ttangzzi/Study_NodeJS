@@ -10,7 +10,8 @@
     <%- include('nav.ejs') %>
 
     <!-- action에 URL method에 방법 , 작성한 글을 서버로 보낸다 -->
-    <form class="form-box" action="/update" method="POST">
+    <!-- PUT요청을 하기 위해 method가 아닌 action을 수정한다. -->
+    <form class="form-box" action="/update?_method=PUT" method="POST">
       <h4>글쓰기</h4>
       <input name="id" value="<%= posts._id %>" style="display: none" />
       <input name="title" value="<%= posts.title %>" />

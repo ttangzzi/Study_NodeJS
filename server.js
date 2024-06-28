@@ -109,3 +109,26 @@ app.get("/detail/:postID", async (요청, 응답) => {
     응답.status(404).send("이상한 url 입력");
   }
 });
+
+app.get("/edit/:postID", async (요청, 응답) => {
+  let result = await db
+    .collection("post")
+    .findOne({ _id: new ObjectId(요청.params.postID) });
+  응답.render("edit.ejs", { posts: result });
+});
+
+app.post("/update", async (요청, 응답) => {
+  try {
+    let result = await db
+      .collection("post")
+      .updateOne(
+        { _id: new ObjectId(요청.body.id) },
+        { $set: { title: 요청.body.title, content: 요청.body.content } }
+      );
+    console.log(result);
+    응답.redirect("/list");
+  } catch (e) {
+    console.log(e);
+    응답.status(500).send("서버 에러");
+  }
+});

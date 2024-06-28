@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>edit</title>
+    <link rel="stylesheet" href="/main.css" />
+  </head>
+  <body class="grey-bg">
+    <%- include('nav.ejs') %>
+
+    <!-- action에 URL method에 방법 , 작성한 글을 서버로 보낸다 -->
+    <form class="form-box" action="/update" method="POST">
+      <h4>글쓰기</h4>
+      <input name="id" value="<%= posts._id %>" style="display: none" />
+      <input name="title" value="<%= posts.title %>" />
+      <input name="content" value="<%= posts.content %>" />
+      <button type="submit">전송</button>
+    </form>
+  </body>
+</html>

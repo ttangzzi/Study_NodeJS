@@ -18,10 +18,29 @@
         <h4>
           <a href="/detail/<%= posts[i]._id %>"><%= posts[i].title %></a>
           <a title="게시글 수정" href="/edit/<%= posts[i]._id %>">📝</a>
+          <span class="delete" data-id="<%= posts[i]._id %>">🗑️</span>
         </h4>
         <p><%= posts[i].content %></p>
       </div>
       <% } %>
     </div>
+
+    <script>
+      const deleteButton = document.querySelectorAll(".delete");
+      for (let i = 0; i < deleteButton.length; i++) {
+        deleteButton[i].addEventListener("click", function (e) {
+          fetch(`delete?docid=${e.target.dataset.id}`, {
+            method: "DELETE",
+          });
+        });
+      }
+      // document
+      //   .querySelectorAll(".delete")[0]
+      //   .addEventListener("click", function (e) {
+      //     fetch(`/delete?docid= ${e.target.dataset.id}`, {
+      //       method: "DELETE",
+      //     });
+      //   });
+    </script>
   </body>
 </html>

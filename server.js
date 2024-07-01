@@ -139,3 +139,11 @@ app.put("/update", async (요청, 응답) => {
     응답.status(500).send("서버 에러");
   }
 });
+
+app.delete("/delete", async (요청, 응답) => {
+  // db에 있는 document 삭제하기
+  await db
+    .collection("post")
+    .deleteOne({ _id: new ObjectId(요청.query.docid) });
+  console.log("삭제완료");
+});

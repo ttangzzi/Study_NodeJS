@@ -147,3 +147,15 @@ app.delete("/delete", async (요청, 응답) => {
     .deleteOne({ _id: new ObjectId(요청.query.docid) });
   응답.send("삭제 완료");
 });
+
+app.get("/list/:id", async (요청, 응답) => {
+  // skip 5개 * (id-1)개 -> 0, 5, 10, 15, ...
+  let page = await db.collection("post").find().toArray();
+  let result = await db
+    .collection("post")
+    .find()
+    .skip(5 * (요청.params.id - 1))
+    .limit(5)
+    .toArray();
+  응답.render("list.ejs", { posts: result, pages: page });
+});

@@ -24,6 +24,13 @@
       </div>
       <% } %>
     </div>
+    <div class="page-nation">
+      <% for (let i = 1; i<= Math.ceil(pages.length/5); i++) { %>
+      <div>
+        <a class="page-button" href="/list/<%= i %>"><%= i %></a>
+      </div>
+      <% } %>
+    </div>
 
     <script>
       const deleteButton = document.querySelectorAll(".delete");

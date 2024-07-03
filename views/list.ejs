@@ -31,16 +31,14 @@
         deleteButton[i].addEventListener("click", function (e) {
           fetch(`delete?docid=${e.target.dataset.id}`, {
             method: "DELETE",
-          });
+          })
+            .then((r) => r.text())
+            .then((r) => {
+              // e.targer : 지금 클릭한 것
+              e.target.parentElement.parentElement.style.display = "none";
+            });
         });
       }
-      // document
-      //   .querySelectorAll(".delete")[0]
-      //   .addEventListener("click", function (e) {
-      //     fetch(`/delete?docid= ${e.target.dataset.id}`, {
-      //       method: "DELETE",
-      //     });
-      //   });
     </script>
   </body>
 </html>

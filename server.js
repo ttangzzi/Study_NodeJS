@@ -145,5 +145,5 @@ app.delete("/delete", async (요청, 응답) => {
   await db
     .collection("post")
     .deleteOne({ _id: new ObjectId(요청.query.docid) });
-  console.log("삭제완료");
+  응답.send("삭제 완료");
 });

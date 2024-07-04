@@ -52,7 +52,7 @@ app.get("/list", async (요청, 응답) => {
 
   // ejs 파일을 보내주기 위해 sendFile(for html)이 아닌 render(for ejs)로 적어준다.
   // 서버 사이드 랜더링
-  응답.render("list.ejs", { posts: result });
+  응답.render("list.ejs", { posts: result, pages: result });
 });
 
 app.get("/time", (요청, 응답) => {
@@ -79,7 +79,7 @@ app.post("/add", async (요청, 응답) => {
         content: 요청.body.content,
       });
       console.log("DB로 게시되었습니다.");
-      응답.redirect("/list"); // 특정 페이지로 이동시킨다
+      응답.redirect("/list/1"); // 특정 페이지로 이동시킨다
     }
   } catch (e) {
     // 에러나면 여기 실행
@@ -145,7 +145,7 @@ app.delete("/delete", async (요청, 응답) => {
   await db
     .collection("post")
     .deleteOne({ _id: new ObjectId(요청.query.docid) });
-  응답.send("삭제 완료");
+  응답.send("삭제완료");
 });
 
 app.get("/list/:id", async (요청, 응답) => {

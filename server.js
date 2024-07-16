@@ -174,11 +174,27 @@ app.get("/list/:id", async (요청, 응답) => {
   응답.render("list.ejs", { posts: result, pages: page });
 });
 
+app.get("/mypage", (요청, 응답)=> {
+  try {
+    if(요청.user != undefined) {
+      응답.render("mypage.ejs", {username : 요청.user.username});
+    }
+    else {
+      응답.send("로그인이 필요합니다.");
+    }
+    
+  } catch(e) {
+    console.log(e);
+  }
+})
+
+// ===== 회원기능 ======
 app.get('/login', (요청, 응답)=> {
+  console.log(요청.user);
   응답.render('login.ejs');
 });
 
-app.post('/login', (요청, 응답)=>{
+app.post('/login', (요청, 응답, next)=>{
   passport.authenticate('local', (error, user, info)=> {
     if (error) return 응답.status(500).json(error);
     if (!user) return 응답.status(401).json(info.message);
@@ -189,6 +205,7 @@ app.post('/login', (요청, 응답)=>{
   })(요청, 응답, next);
 })
 
+// passport 라이브러리를 사용하여 ID/PW 검증 로직 작성
 passport.use(new LocalStrategy(async (입력한아이디, 입력한비번, cb)=> {
   try {
     let result = await db.collection('user').findOne({ username : 입력한아이디})
@@ -204,3 +221,22 @@ passport.use(new LocalStrategy(async (입력한아이디, 입력한비번, cb)=>
     console.log(e);
   }
 }))
+
+// 요청.login() 을 사용하면 해당 코드도 실행된다.
+passport.serializeUser((user, done) => {
+  process.nextTick(()=> {
+    done(null, { _id : user._id, username : user.username});
+  })
+})
+
+// 유저가 보낸 쿠키를 분석하는 역할을 하는 코드
+passport.deserializeUser(async(user, done)=> {
+  // 세션에 적힌 user 정보를 그대로 가져오는 문제 -> 최신으로 나오도록 db조회
+  // 문제점 : 사이트에서 user.id 로 되어있는데 user._id 로 적어야함
+  let result = await db.collection('user').findOne({ _id : new ObjectId(user._id) })
+  // 비밀번호 항목은 삭제
+  delete result.password;
+  process.nextTick(()=> {
+    done(null, result);
+  })
+})

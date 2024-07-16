@@ -3,6 +3,11 @@ const express = require("express");
 const app = express();
 // method-override를 사용하기 위한 세팅
 const methodOverride = require("method-override");
+// 해싱 함수 라이브러리
+const bcrypt = require('bcrypt');
+// DB에 세션 저장하기 위한 라이브러리
+const MongoStore = require('connect-mongo');
+
 app.use(methodOverride("_method"));
 
 // css 파일 있는 폴더(public)를 등록해야한다. css,js,img 등 적용가능 (static 파일들)
@@ -37,7 +42,12 @@ app.use(passport.initialize())
 app.use(session({
   secret: 'abc', // 암호화에 쓸 비번
   resave : false,
-  saveUninitialized : false
+  saveUninitialized : false,
+  cookie: { maxAge : 60 * 60 * 1000},
+  store : MongoStore.create({
+    mongoUrl : "mongodb+srv://cvbg0802:sook6055@cluster0.gi0zdlm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    dbName : 'forum'
+  })
 }))
 
 app.use(passport.session())
@@ -188,9 +198,21 @@ app.get("/mypage", (요청, 응답)=> {
   }
 })
 
+app.get("/register", (요청, 응답)=> {
+  응답.render('register.ejs');
+})
+
+app.post('/register', async(요청, 응답)=> {
+  let hash = await bcrypt.hash(요청.body.password, 10);
+  await db.collection('user')
+  .insertOne({
+    username : 요청.body.username, password : hash
+  })
+  응답.redirect('/');
+})
+
 // ===== 회원기능 ======
 app.get('/login', (요청, 응답)=> {
-  console.log(요청.user);
   응답.render('login.ejs');
 });
 
@@ -212,7 +234,8 @@ passport.use(new LocalStrategy(async (입력한아이디, 입력한비번, cb)=>
     if (!result) {
       return cb(null, false, { message: '아이디 DB에 없음'});
     }
-    if (result.password == 입력한비번) {
+    // 해시된 비밀번호와 해시전 비밀번호를 비교한다.
+    if (await(bcrypt.compare(입력한비번, result.password))) {
       return cb(null, result);
     } else {
       return cb(null, false, { message : '비번불일치'});

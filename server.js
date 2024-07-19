@@ -84,7 +84,13 @@ app.get("/time", (요청, 응답) => {
 });
 
 app.get("/write", (요청, 응답) => {
-  응답.render("write.ejs");
+  // 로그인한 유저만 글 작성할 수 있도록 한다.
+  if(요청.user == null) {
+    응답.send("로그인이 필요합니다.");
+  }
+  else {
+    응답.render("write.ejs");
+  }
 });
 
 app.post("/add", async (요청, 응답) => {
@@ -203,12 +209,23 @@ app.get("/register", (요청, 응답)=> {
 })
 
 app.post('/register', async(요청, 응답)=> {
+  let search = await db.collection('user').findOne({username : 요청.body.username});
   let hash = await bcrypt.hash(요청.body.password, 10);
-  await db.collection('user')
+
+  if(search) { // 중복된 아이디 가입을 막기
+    응답.send('중복된 아이디가 있습니다.');
+  }
+  // 비밀번호 확인란과 일치해야 가입 가능
+  else if (요청.body.password != 요청.body.passwordCheck ) {
+    응답.send('비밀번호 확인란을 확인하십시오.');
+  }
+  else {
+    await db.collection('user')
   .insertOne({
     username : 요청.body.username, password : hash
   })
   응답.redirect('/');
+  }
 })
 
 // ===== 회원기능 ======

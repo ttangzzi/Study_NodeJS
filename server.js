@@ -7,6 +7,8 @@ const methodOverride = require("method-override");
 const bcrypt = require('bcrypt');
 // DB에 세션 저장하기 위한 라이브러리
 const MongoStore = require('connect-mongo');
+// 환경변수
+require('dotenv').config()
 
 app.use(methodOverride("_method"));
 
@@ -45,7 +47,7 @@ app.use(session({
   saveUninitialized : false,
   cookie: { maxAge : 60 * 60 * 1000},
   store : MongoStore.create({
-    mongoUrl : "mongodb+srv://cvbg0802:sook6055@cluster0.gi0zdlm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    mongoUrl : process.env.DB_URL,
     dbName : 'forum'
   })
 }))
@@ -53,14 +55,43 @@ app.use(session({
 app.use(passport.session())
 
 // ==================================== //
-app.listen(8081, () => {
-  console.log("http://localhost:8081 에서 서버 실행 중");
+app.listen(process.env.PORT, () => {
+  console.log("http://localhost:"+process.env.PORT + " 에서 서버 실행 중");
 });
+
+// 미들웨어 만들기
+function checkLogin(요청, 응답, next) {
+  if (!요청.user) {
+    // return 으로 끝내도록해야 오류 안생김
+    return 응답.send("로그인 해주세요.");
+  }
+  next()
+}
+
+// 숙제1 : list 요청 시 현재 시간 터미널에 출력
+function nowTime(요청, 응답, next) {
+  let time = new Date();
+  let [hour, min, sec] = [time.getHours(), time.getMinutes(), time.getSeconds()];
+  console.log(`${hour}시 ${min}분 ${sec}초`);
+  next();
+}
+
+// 숙제2 : 로그인 시 ID/PW 부분이 빈칸이면 입력해달란 응답하는 미들웨어 작성
+function checkNull(요청, 응답, next) {
+  if (!요청.body.username || !요청.body.password) {
+    return 응답.send("ID/PW 를 입력해주세요.");
+  }
+  next();
+}
 
 // 웹 페이지 보내주기
 app.get("/", (요청, 응답) => {
   응답.sendFile(__dirname + "/index.html");
 });
+
+// 미들웨어 일괄등록 (여기 코드 아래부터 등록함)
+app.use('/write',checkLogin)
+app.use('/list', nowTime);
 
 // 새로운 페이지 만들기
 app.get("/news", async (요청, 응답) => {
@@ -85,12 +116,7 @@ app.get("/time", (요청, 응답) => {
 
 app.get("/write", (요청, 응답) => {
   // 로그인한 유저만 글 작성할 수 있도록 한다.
-  if(요청.user == null) {
-    응답.send("로그인이 필요합니다.");
-  }
-  else {
     응답.render("write.ejs");
-  }
 });
 
 app.post("/add", async (요청, 응답) => {
@@ -233,7 +259,7 @@ app.get('/login', (요청, 응답)=> {
   응답.render('login.ejs');
 });
 
-app.post('/login', (요청, 응답, next)=>{
+app.post('/login', checkNull, (요청, 응답, next)=>{
   passport.authenticate('local', (error, user, info)=> {
     if (error) return 응답.status(500).json(error);
     if (!user) return 응답.status(401).json(info.message);

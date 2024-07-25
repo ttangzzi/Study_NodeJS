@@ -10,6 +10,8 @@ const MongoStore = require('connect-mongo');
 // 환경변수
 require('dotenv').config()
 
+app.use('/shop', require('./routes/shop.js'));
+
 app.use(methodOverride("_method"));
 
 // css 파일 있는 폴더(public)를 등록해야한다. css,js,img 등 적용가능 (static 파일들)
@@ -101,7 +103,7 @@ app.get("/news", async (요청, 응답) => {
 
 // list에 들어가면 DB 데이터를 가져와 출력한다
 app.get("/list", async (요청, 응답) => {
-  let result = await db.collection("post").find().toArray();
+  let result = await db.collection("post").find().sort({ _id : -1}).toArray();
   // console.log(result[0].title); // 0번째의 title 가져와 log에 출력
   // 응답.send(result[0].title); // title을 사이트에 보이도록 하기
 
@@ -206,10 +208,11 @@ app.delete("/delete", async (요청, 응답) => {
 
 app.get("/list/:id", async (요청, 응답) => {
   // skip 5개 * (id-1)개 -> 0, 5, 10, 15, ...
-  let page = await db.collection("post").find().toArray();
+  let page = await db.collection("post").find().sort({ _id : -1 }).toArray();
   let result = await db
     .collection("post")
     .find()
+    .sort({ _id : -1 })
     .skip(5 * (요청.params.id - 1))
     .limit(5)
     .toArray();
@@ -305,4 +308,12 @@ passport.deserializeUser(async(user, done)=> {
   process.nextTick(()=> {
     done(null, result);
   })
+})
+
+app.get('/shop/shirts', (요청, 응답)=> {
+  응답.send('셔츠 페이지');
+});
+
+app.get('/shop/pants', (요청, 응답)=> {
+  응답.send('바지 페이지');
 })

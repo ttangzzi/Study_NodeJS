@@ -10,8 +10,6 @@ const MongoStore = require('connect-mongo');
 // 환경변수
 require('dotenv').config()
 
-app.use('/shop', require('./routes/shop.js'));
-
 app.use(methodOverride("_method"));
 
 // css 파일 있는 폴더(public)를 등록해야한다. css,js,img 등 적용가능 (static 파일들)
@@ -24,14 +22,16 @@ app.use(express.urlencoded({ extended: true }));
 
 // mongo DB 연결 세팅 코드 + Object ID 를 쓸 수 있도록 세팅
 const { MongoClient, ObjectId } = require("mongodb");
+// connectDB 사용을 위해 database.js exports 가져오기
+let connectDB = require('./database.js');
+
 let db;
-const url =
-  "mongodb+srv://cvbg0802:sook6055@cluster0.gi0zdlm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
-new MongoClient(url)
-  .connect()
-  .then((client) => {
+connectDB.then((client) => {
     console.log("DB연결성공");
     db = client.db("forum"); // forum에 연결
+    app.listen(process.env.PORT, () => {
+      console.log("http://localhost:"+process.env.PORT + " 에서 서버 실행 중")
+    });
   })
   .catch((err) => {
     console.log(err);
@@ -57,9 +57,6 @@ app.use(session({
 app.use(passport.session())
 
 // ==================================== //
-app.listen(process.env.PORT, () => {
-  console.log("http://localhost:"+process.env.PORT + " 에서 서버 실행 중");
-});
 
 // 미들웨어 만들기
 function checkLogin(요청, 응답, next) {
@@ -310,10 +307,5 @@ passport.deserializeUser(async(user, done)=> {
   })
 })
 
-app.get('/shop/shirts', (요청, 응답)=> {
-  응답.send('셔츠 페이지');
-});
-
-app.get('/shop/pants', (요청, 응답)=> {
-  응답.send('바지 페이지');
-})
+// 다른 파일의 /shop/~ 사용하기
+app.use('/shop', require('./routes/shop.js'));

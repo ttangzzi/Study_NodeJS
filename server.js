@@ -90,7 +90,7 @@ app.get("/", (요청, 응답) => {
 
 // 미들웨어 일괄등록 (여기 코드 아래부터 등록함)
 app.use('/write',checkLogin)
-app.use('/list', nowTime);
+// app.use('/list', nowTime);
 
 // 새로운 페이지 만들기
 app.get("/news", async (요청, 응답) => {
@@ -309,3 +309,9 @@ passport.deserializeUser(async(user, done)=> {
 
 // 다른 파일의 /shop/~ 사용하기
 app.use('/shop', require('./routes/shop.js'));
+
+app.post('/search', async(요청, 응답)=> {
+  let result = await db.collection('post')
+  .find({ title : 요청.body.title }).toArray();
+  응답.redirect
+})

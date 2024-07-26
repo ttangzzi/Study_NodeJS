@@ -100,3 +100,16 @@ div {
   font-size: 20px;
   color: skyblue;
 }
+
+.search {
+  margin-top: 20px;
+  margin-left: 20px;
+  padding: 5px;
+}
+.searchBtn {
+  padding: 6px 10px;
+  background: lightgray;
+  border: none;
+  border-radius: 5px;
+  vertical-align: middle;
+} 

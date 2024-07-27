@@ -310,8 +310,23 @@ passport.deserializeUser(async(user, done)=> {
 // 다른 파일의 /shop/~ 사용하기
 app.use('/shop', require('./routes/shop.js'));
 
-app.post('/search', async(요청, 응답)=> {
+// app.post('/search', async(요청, 응답)=> {
+//   let result = await db.collection('post')
+//   .find({ title : 요청.body.title }).toArray();
+//   응답.redirect
+// })
+
+app.get('/search', async(요청, 응답)=>{
+  let cond = [
+    {$search : {
+      index : 'title_index',
+      text : { query : 요청.query.val, path : 'title' }
+    }},
+    { $sort : { _id : -1 }},
+    
+  ]
   let result = await db.collection('post')
-  .find({ title : 요청.body.title }).toArray();
-  응답.redirect
+  .aggregate(cond)
+  .toArray();
+  응답.render('search.ejs', { posts : result });
 })

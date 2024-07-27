@@ -23,6 +23,8 @@
       })
 
     </script>
+
+    <h4>검색결과</h4>
     
     <div class="white-bg">
       <!-- for문을 통해 글 갯수만큼 게시물을 작성 -->
@@ -38,30 +40,8 @@
       </div>
       <% } %>
     </div>
-    <div class="page-nation">
-      <% for (let i = 1; i<= Math.ceil(pages.length/5); i++) { %>
-      <div>
-        <a class="page-button" href="/list/<%= i %>"><%= i %></a>
-      </div>
-      <% } %>
-    </div>
+    
 
-    <script>
-      const deleteButton = document.querySelectorAll(".delete");
-      for (let i = 0; i < deleteButton.length; i++) {
-        deleteButton[i].addEventListener("click", function (e) {
-          fetch("/delete?docid=" + e.target.dataset.id, {
-            method: "DELETE",
-          })
-            .then((r) => {
-              // e.target : 지금 클릭한 것
-              e.target.parentElement.parentElement.style.display = "none";
-            })
-            .catch((error) => {
-              console.log("오류");
-            });
-        });
-      }
-    </script>
+    
   </body>
 </html>

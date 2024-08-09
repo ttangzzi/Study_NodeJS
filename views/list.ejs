@@ -32,7 +32,9 @@
         <h4>
           <a href="/detail/<%= posts[i]._id %>"><%= posts[i].title %></a>
           <a title="게시글 수정" href="/edit/<%= posts[i]._id %>">📝</a>
-          <span class="delete" data-id="<%= posts[i]._id %>">🗑️</span>
+          <% if (JSON.stringify(posts[i].user) === JSON.stringify(login)) { %>
+            <span class="delete" data-id="<%= posts[i]._id %>">🗑️</span>
+          <% } %>
         </h4>
         <p><%= posts[i].content %></p>
       </div>

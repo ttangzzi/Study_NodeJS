@@ -199,7 +199,6 @@ app.put("/update", async (요청, 응답) => {
 
 app.delete("/delete", async (요청, 응답) => {
   // db에 있는 document 삭제하기
-  console.log(new ObjectId(요청.query.docid))
   try {
     let result = await db
     .collection("post")
@@ -220,7 +219,7 @@ app.get("/list/:id", async (요청, 응답) => {
     .skip(5 * (요청.params.id - 1))
     .limit(5)
     .toArray();
-  응답.render("list.ejs", { posts: result, pages: page });
+  응답.render("list.ejs", { posts: result, pages: page, login: 요청.user._id});
 });
 
 app.get("/mypage", (요청, 응답)=> {

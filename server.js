@@ -132,6 +132,8 @@ app.post("/add", async (요청, 응답) => {
       await db.collection("post").insertOne({
         title: 요청.body.title,
         content: 요청.body.content,
+        user : 요청.user._id,
+        username : 요청.user.username
       });
       console.log("DB로 게시되었습니다.");
       응답.redirect("/list/1"); // 특정 페이지로 이동시킨다
@@ -197,10 +199,15 @@ app.put("/update", async (요청, 응답) => {
 
 app.delete("/delete", async (요청, 응답) => {
   // db에 있는 document 삭제하기
-  await db
+  console.log(new ObjectId(요청.query.docid))
+  try {
+    let result = await db
     .collection("post")
-    .deleteOne({ _id: new ObjectId(요청.query.docid) });
-  응답.send("삭제완료");
+    .deleteOne({ _id: new ObjectId(요청.query.docid), 
+      user : new ObjectId(요청.user._id)});
+    응답.json({ owner : result.deletedCount });
+  } catch(e) {
+  }
 });
 
 app.get("/list/:id", async (요청, 응답) => {

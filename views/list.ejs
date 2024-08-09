@@ -53,9 +53,12 @@
           fetch("/delete?docid=" + e.target.dataset.id, {
             method: "DELETE",
           })
-            .then((r) => {
+            .then((r)=> r.json())
+            .then((data) => {
               // e.target : 지금 클릭한 것
-              e.target.parentElement.parentElement.style.display = "none";
+              if(data.owner > 0) {
+                e.target.parentElement.parentElement.style.display = "none";
+              }
             })
             .catch((error) => {
               console.log("오류");
